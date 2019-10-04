@@ -27,12 +27,23 @@ imap nn <Esc>
 nmap <leader>s :Files<CR>
 nmap <leader>t :Buffers<CR>
 nmap <leader>n :NERDTree<CR>
+nmap <leader>e :tabe <bar> TW<CR>
 nmap gs :Rg <C-R><C-W><CR>
 nmap ges :Rg \b<C-R><C-W>\b<CR>
 nmap n nzz
 nmap N nzz
 nmap # #zz
 nmap * *zz
+
+command! -bang -nargs=? -complete=dir Files
+  \ call fzf#vim#files(<q-args>, {'options': ['--preview', 'bat -p --color always {}']}, <bang>0)
+
+let $FZF_PREVIEW_COMMAND = 'bat -p --color always {} || cat {}'
+command! -nargs=* Rg
+  \ call fzf#vim#grep(
+  \   'rg --column --line-number --no-heading --color=always --smart-case '.shellescape(<q-args>),
+  \   1,
+  \   fzf#vim#with_preview('right:50%'))
 
 " Remap keys for gotos
 nmap <silent> gd <Plug>(coc-definition)
@@ -97,8 +108,8 @@ set encoding=utf-8
 " let g:limelight_priority = -1
 
 " AYU SETTINGS
-let ayucolor="light"  " for light version of theme
-" let ayucolor="mirage" " for mirage version of theme
+" let ayucolor="light"  " for light version of theme
+let ayucolor="mirage" " for mirage version of theme
 " let ayucolor="dark"   " for dark version of theme
 
 inoremap <silent><expr> <Tab>
@@ -119,6 +130,9 @@ Plug 'junegunn/goyo.vim'
 Plug 'junegunn/limelight.vim'
 Plug 'danilo-augusto/vim-afterglow'
 Plug 'ayu-theme/ayu-vim'
+Plug 'tpope/vim-surround'
+Plug 'ryanoasis/vim-devicons'
+Plug 'blindFS/vim-taskwarrior'
 
 Plug 'neoclide/coc.nvim', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-eslint', {'do': 'yarn install --frozen-lockfile'}
@@ -138,5 +152,5 @@ call plug#end()
 colorscheme ayu
 autocmd! User GoyoEnter Limelight
 autocmd! User GoyoLeave Limelight!
-autocmd VimEnter * Goyo 50%x100% | highlight StatusLineNC ctermfg=white
+" autocmd VimEnter * Goyo 50%x100% | highlight StatusLineNC ctermfg=white
 autocmd BufWritePre *.go :CocCommand editor.action.organizeImport
