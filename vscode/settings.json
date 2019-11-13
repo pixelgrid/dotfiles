@@ -1,0 +1,129 @@
+{
+    "editor.cursorBlinking": "phase",
+    "editor.tabSize": 2,
+    "editor.roundedSelection": true,
+    "editor.glyphMargin": true,
+    "editor.fontSize": 18,
+    "editor.lineNumbers": "on",
+    "editor.rulers": [
+        100
+    ],
+    "editor.renderIndentGuides": true,
+    "editor.formatOnType": true,
+    "editor.formatOnSave": true,
+    "editor.scrollBeyondLastLine": false,
+    "editor.minimap.enabled": false,
+    "editor.wordWrap": "wordWrapColumn",
+    "files.exclude": {
+        //"**/.tmp": true,
+        ".venv": true,
+        "**/vendor": true,
+        "**/.git": true,
+        "**/.DS_Store": true,
+        "go-build/.go": true,
+        ".gen": true,
+        ".vscode": true,
+        "env": true,
+        "env_docs": true,
+        "udeploy": true,
+        "debian": true,
+        "**/*.test": true,
+        "**/*.pyc": true,
+        "Godeps/_workspace": true,
+        "**/coverage.html": true,
+        "**/_build": true,
+        "**/*.coverprofile": true,
+        "**/__pycache__": true
+    },
+    "files.trimTrailingWhitespace": true,
+    "files.autoSave": "onFocusChange",
+    "files.insertFinalNewline": true,
+    "go.autocompleteUnimportedPackages": true,
+    "go.lintTool": "gometalinter",
+    "go.lintFlags": [
+        "--fast",
+        "--enable=errcheck"
+    ],
+    "go.vetFlags": [
+        "-printfuncs=wrapf,statusf,warnf,infof,debugf,noerrorf,equalf,newexiterrorf,containsf,truef,falsef,equalf,emptyf,failf"
+    ],
+    "python.linting.enabled": true,
+    "python.linting.flake8Enabled": true,
+    "python.linting.pylintEnabled": false,
+    "python.linting.lintOnSave": true,
+    "[python]": {
+        "editor.tabSize": 4
+    },
+    "window.titleBarStyle": "custom",
+    //"python.formatting.provider": "yapf",
+    "vim.useCtrlKeys": true,
+    "vim.enableNeovim": true,
+    "vim.normalModeKeyBindings": [
+        {
+            "before": [
+                "K",
+            ],
+            "commands": [
+                {
+                    "command": "editor.action.showHover"
+                }
+            ]
+        },
+        {
+            "before": [
+                "g",
+                "D",
+            ],
+            "commands": [
+                {
+                    "command": "editor.action.revealDefinition"
+                }
+            ]
+        }
+    ],
+    "vim.insertModeKeyBindings": [
+        {
+            "before": [
+                "n",
+                "n"
+            ],
+            "after": [
+                "<Esc>"
+            ]
+        }
+    ],
+    "workbench.iconTheme": "eq-material-theme-icons-darker",
+    "[cpp]": {
+        "editor.quickSuggestions": false
+    },
+    "[c]": {
+        "editor.quickSuggestions": false
+    },
+    // https://github.com/Microsoft/vscode/issues/23991
+    "keyboard.dispatch": "keyCode",
+    "editor.fontFamily": "'GoMono Nerd Font Mono', 'monospace', monospace, 'Droid Sans Fallback'",
+    "workbench.activityBar.visible": true,
+    "materialTheme.autoApplyIcons": true,
+    "window.zoomLevel": 0,
+    "telemetry.enableTelemetry": false,
+    "window.titleBarStyle": "custom",
+    "editor.wordWrapColumn": 100,
+    "breadcrumbs.enabled": true,
+    "workbench.colorTheme": "Atom One Light",
+    "terminal.integrated.fontSize": "20px",
+    "vim.neovimPath": "/usr/local/bin/nvim",
+    "eslint.autoFixOnSave": true,
+    "terminal.integrated.rendererType": "dom",
+    "vim.easymotion": true,
+    "vim.leader": "<\\space>",
+    "javascript.format.insertSpaceAfterCommaDelimiter": false,
+    "javascript.format.enable": false,
+    "javascript.format.insertSpaceAfterFunctionKeywordForAnonymousFunctions": false,
+    "javascript.format.insertSpaceAfterKeywordsInControlFlowStatements": false,
+    "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces": false,
+    "javascript.format.insertSpaceAfterSemicolonInForStatements": false,
+    "javascript.format.insertSpaceBeforeAndAfterBinaryOperators": false,
+    "emmet.includeLanguages": {
+        "javascript": "javascriptreact"
+    }
+}
