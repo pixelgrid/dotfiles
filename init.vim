@@ -23,16 +23,29 @@ set noswapfile
 set number
 let mapleader = "\<Space>"
 
-imap nn <Esc>
+imap ee <Esc>
 nmap <leader>s :Files<CR>
 nmap <leader>t :Buffers<CR>
 nmap <leader>n :NERDTree<CR>
+nmap <leader>e :tabe <bar> TW<CR>
 nmap gs :Rg <C-R><C-W><CR>
 nmap ges :Rg \b<C-R><C-W>\b<CR>
 nmap n nzz
 nmap N nzz
 nmap # #zz
 nmap * *zz
+
+command! -bang -nargs=? -complete=dir Files
+  \ call fzf#vim#files(<q-args>, {'options': ['--preview', 'bat -p --color always {}']}, <bang>0)
+
+let $FZF_PREVIEW_COMMAND = 'bat -p --color always {} || cat {}'
+command! -nargs=* Rg
+  \ call fzf#vim#grep(
+  \   'rg --column --line-number --no-heading --color=always --smart-case '.shellescape(<q-args>),
+  \   1,
+  \   fzf#vim#with_preview('right:50%'))
+
+let g:go_doc_window_popup_window=1
 
 " Remap keys for gotos
 nmap <silent> gd <Plug>(coc-definition)
@@ -50,6 +63,21 @@ function! s:show_documentation()
     call CocAction('doHover')
   endif
 endfunction
+
+
+""""" VIM GO
+
+let g:go_gopls_complete_unimported = 1
+" Specifies whether `gopls` can provide placeholders 
+" for function parameters and struct fields.
+let g:go_gopls_use_placeholders = 1
+let g:go_fmt_command = "goimports"
+let g:go_def_mode='gopls'
+let g:go_info_mode='gopls'
+let g:go_def_mapping_enabled=0
+" let g:go_doc_popup_window=1
+let g:go_doc_keywordprg_enabled=0
+""""" VIM GO
 
 """" enable 24bit true color
 set termguicolors
@@ -97,15 +125,15 @@ set encoding=utf-8
 " let g:limelight_priority = -1
 
 " AYU SETTINGS
-let ayucolor="light"  " for light version of theme
-" let ayucolor="mirage" " for mirage version of theme
+" let ayucolor="light"  " for light version of theme
+let ayucolor="mirage" " for mirage version of theme
 " let ayucolor="dark"   " for dark version of theme
 
 inoremap <silent><expr> <Tab>
       \ pumvisible() ? "\<C-n>" : "\<TAB>"
 
 call plug#begin('~/.local/share/nvim/plugged')
-" Plug 'fatih/vim-go'
+Plug 'fatih/vim-go'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'scrooloose/nerdtree'
@@ -114,29 +142,17 @@ Plug 'scrooloose/nerdtree'
 Plug 'Rigellute/rigel'
 Plug 'moll/vim-node'
 Plug 'tpope/vim-fugitive'
-"Plug 'bilalq/lite-dfm'
 Plug 'junegunn/goyo.vim'
 Plug 'junegunn/limelight.vim'
 Plug 'danilo-augusto/vim-afterglow'
 Plug 'ayu-theme/ayu-vim'
-
+Plug 'tpope/vim-surround'
+Plug 'ryanoasis/vim-devicons'
 Plug 'neoclide/coc.nvim', {'do': 'yarn install --frozen-lockfile'}
-Plug 'neoclide/coc-eslint', {'do': 'yarn install --frozen-lockfile'}
-Plug 'neoclide/coc-lists', {'do': 'yarn install --frozen-lockfile'}
-
-
-"Plug 'neoclide/coc-git', {'do': 'yarn install --frozen-lockfile'}
-"Plug 'neoclide/coc-tabnine', {'do': 'yarn install --frozen-lockfile'}
-"Plug 'neoclide/coc-css', {'do': 'yarn install --frozen-lockfile'}
-"Plug 'neoclide/coc-json', {'do': 'yarn install --frozen-lockfile'}
-"Plug 'neoclide/coc-html', {'do': 'yarn install --frozen-lockfile'}
-"Plug 'neoclide/coc-tsserver', {'do': 'yarn install --frozen-lockfile'}
-"Plug 'neoclide/coc-flow', {'do': 'yarn install --frozen-lockfile'}
-
 call plug#end()
 
 colorscheme ayu
 autocmd! User GoyoEnter Limelight
 autocmd! User GoyoLeave Limelight!
-autocmd VimEnter * Goyo 50%x100% | highlight StatusLineNC ctermfg=white
-autocmd BufWritePre *.go :CocCommand editor.action.organizeImport
+" autocmd VimEnter * Goyo 50%x100% | highlight StatusLineNC ctermfg=white
+" autocmd BufWritePre *.go :CocCommand editor.action.organizeImport
