@@ -35,26 +35,72 @@ nmap N nzz
 nmap # #zz
 nmap * *zz
 
-command! -bang -nargs=? -complete=dir Files
-  \ call fzf#vim#files(<q-args>, {'options': ['--preview', 'bat -p --color always {}']}, <bang>0)
+let $FZF_PREVIEW_COMMAND = 'bat --theme="Monokai Extended Light" -p --color=always {} || cat {}'
+let $FZF_DEFAULT_OPTS='--layout=reverse'
 
-let $FZF_PREVIEW_COMMAND = 'bat -p --color always {} || cat {}'
+command! -bang -nargs=? -complete=dir Files
+  \ call fzf#vim#files(<q-args>, {'options': ['--preview', 'bat -p --theme="Monokai Extended Light" --color=always {}']}, <bang>0)
+
 command! -nargs=* Rg
   \ call fzf#vim#grep(
   \   'rg --column --line-number --no-heading --color=always --smart-case '.shellescape(<q-args>),
   \   1,
   \   fzf#vim#with_preview('right:50%'))
 
+
+let g:fzf_layout = { 'window': 'call FloatingFZF()' }
+
+function! FloatingFZF()
+  let buf = nvim_create_buf(v:false, v:true)
+  call setbufvar(buf, '&signcolumn', 'no')
+
+  let height = &lines - 3
+  let width = float2nr(&columns - (&columns * 2 / 10))
+  let col = float2nr((&columns - width) / 2)
+
+  let opts = {
+        \ 'relative': 'editor',
+        \ 'row': 1,
+        \ 'col': col,
+        \ 'width': width,
+        \ 'height': height
+        \ }
+
+  call nvim_open_win(buf, v:true, opts)
+endfunction
+
+
+let g:fzf_colors =
+\ { 'fg':      ['fg', 'Normal'],
+  \ 'bg':      ['bg', 'Normal'],
+  \ 'hl':      ['fg', 'Comment'],
+  \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
+  \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
+  \ 'hl+':     ['fg', 'Statement'],
+  \ 'info':    ['fg', 'PreProc'],
+  \ 'border':  ['fg', 'Ignore'],
+  \ 'prompt':  ['fg', 'Conditional'],
+  \ 'pointer': ['fg', 'Exception'],
+  \ 'marker':  ['fg', 'Keyword'],
+  \ 'spinner': ['fg', 'Label'],
+  \ 'header':  ['fg', 'EndOfBuffer'] }
+
 let g:go_doc_window_popup_window=1
+let g:user_emmet_expandabbr_key='<Tab>'
+imap <expr> <tab> emmet#expandAbbrIntelligent("\<tab>")
+
 
 " Remap keys for gotos
 nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
+nmap <silent> gn <Plug>(coc-diagnostic-next-error)
 
+
+nmap s <Plug>(easymotion-bd-f)
 " Use K to show documentation in preview window
-" nnoremap <silent> K :call <SID>show_documentation()<CR>
+nnoremap <silent> K :call <SID>show_documentation()<CR>
 
 function! s:show_documentation()
   if (index(['vim','help'], &filetype) >= 0)
@@ -66,7 +112,6 @@ endfunction
 
 
 """"" VIM GO
-
 let g:go_gopls_complete_unimported = 1
 " Specifies whether `gopls` can provide placeholders 
 " for function parameters and struct fields.
@@ -74,6 +119,9 @@ let g:go_gopls_use_placeholders = 1
 let g:go_fmt_command = "goimports"
 let g:go_def_mode='gopls'
 let g:go_info_mode='gopls'
+let g:go_def_mapping_enabled=0
+" let g:go_doc_popup_window=1
+let g:go_doc_keywordprg_enabled=0
 """"" VIM GO
 
 """" enable 24bit true color
@@ -125,7 +173,7 @@ set encoding=utf-8
 " let ayucolor="light"  " for light version of theme
 let ayucolor="mirage" " for mirage version of theme
 " let ayucolor="dark"   " for dark version of theme
-
+set background=light
 inoremap <silent><expr> <Tab>
       \ pumvisible() ? "\<C-n>" : "\<TAB>"
 
@@ -139,31 +187,26 @@ Plug 'scrooloose/nerdtree'
 Plug 'Rigellute/rigel'
 Plug 'moll/vim-node'
 Plug 'tpope/vim-fugitive'
-"Plug 'bilalq/lite-dfm'
 Plug 'junegunn/goyo.vim'
 Plug 'junegunn/limelight.vim'
 Plug 'danilo-augusto/vim-afterglow'
-Plug 'ayu-theme/ayu-vim'
+" Plug 'ayu-theme/ayu-vim'
+" Plug 'morhetz/gruvbox'
+Plug 'NLKNguyen/papercolor-theme'
 Plug 'tpope/vim-surround'
 Plug 'ryanoasis/vim-devicons'
-" Plug 'blindFS/vim-taskwarrior'
+Plug 'easymotion/vim-easymotion'
 
 Plug 'neoclide/coc.nvim', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-eslint', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-lists', {'do': 'yarn install --frozen-lockfile'}
-
-
-"Plug 'neoclide/coc-git', {'do': 'yarn install --frozen-lockfile'}
-"Plug 'neoclide/coc-tabnine', {'do': 'yarn install --frozen-lockfile'}
-"Plug 'neoclide/coc-css', {'do': 'yarn install --frozen-lockfile'}
-"Plug 'neoclide/coc-json', {'do': 'yarn install --frozen-lockfile'}
-"Plug 'neoclide/coc-html', {'do': 'yarn install --frozen-lockfile'}
-"Plug 'neoclide/coc-tsserver', {'do': 'yarn install --frozen-lockfile'}
-"Plug 'neoclide/coc-flow', {'do': 'yarn install --frozen-lockfile'}
+Plug 'mhinz/vim-startify'
 
 call plug#end()
 
-colorscheme ayu
+colorscheme papercolor
 autocmd! User GoyoEnter Limelight
 autocmd! User GoyoLeave Limelight!
+command! -nargs=0 OR :call CocAction('runCommand', 'editor.action.organizeImport')
+autocmd BufWritePre *.go :OR
 " autocmd VimEnter * Goyo 50%x100% | highlight StatusLineNC ctermfg=white
