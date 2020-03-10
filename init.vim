@@ -25,23 +25,87 @@ let mapleader = "\<Space>"
 
 imap nn <Esc>
 nmap <leader>s :Files<CR>
-nmap <leader>t :Buffers<CR>
-nmap <leader>n :NERDTree<CR>
+nmap <leader>n :NERDTreeToggle<CR>
 nmap gs :Rg <C-R><C-W><CR>
 nmap ges :Rg \b<C-R><C-W>\b<CR>
 nmap n nzz
-nmap N nzz
+nmap N Nzz
 nmap # #zz
 nmap * *zz
+
+" Floaterm config
+let g:floaterm_keymap_toggle = '<leader>t'
+let g:floaterm_width = 0.9
+let g:floaterm_height = 0.9
+let g:floaterm_position = 'center'
+
+let $FZF_PREVIEW_COMMAND = 'bat --theme="Monokai Extended Light" -p --color=always {} || cat {}'
+let $FZF_DEFAULT_OPTS='--layout=reverse'
+
+command! -bang -nargs=? -complete=dir Files
+  \ call fzf#vim#files(<q-args>, {'options': ['--preview', 'bat -p --theme="Monokai Extended Light" --color=always {}']}, <bang>0)
+
+command! -nargs=* Rg
+  \ call fzf#vim#grep(
+  \   'rg --column --line-number --no-heading --color=always --smart-case '.shellescape(<q-args>),
+  \   1,
+  \   fzf#vim#with_preview('right:50%'))
+
+
+let g:fzf_layout = { 'window': 'call CreateCenteredFloatingWindow()' }
+
+function! CreateCenteredFloatingWindow()
+    let width = min([&columns - 4, max([80, &columns - 20])])
+    let height = min([&lines - 4, max([20, &lines - 10])])
+    let top = ((&lines - height) / 2) - 1
+    let left = (&columns - width) / 2
+    let opts = {'relative': 'editor', 'row': top, 'col': left, 'width': width, 'height': height, 'style': 'minimal'}
+
+    let top = "╭" . repeat("─", width - 2) . "╮"
+    let mid = "│" . repeat(" ", width - 2) . "│"
+    let bot = "╰" . repeat("─", width - 2) . "╯"
+    let lines = [top] + repeat([mid], height - 2) + [bot]
+    let s:buf = nvim_create_buf(v:false, v:true)
+    call nvim_buf_set_lines(s:buf, 0, -1, v:true, lines)
+    call nvim_open_win(s:buf, v:true, opts)
+    set winhl=Normal:Floating
+    let opts.row += 1
+    let opts.height -= 2
+    let opts.col += 2
+    let opts.width -= 4
+    call nvim_open_win(nvim_create_buf(v:false, v:true), v:true, opts)
+    au BufWipeout <buffer> exe 'bw '.s:buf
+endfunction
+
+let g:fzf_colors =
+\ { 'fg':      ['fg', 'Normal'],
+  \ 'bg':      ['bg', 'Normal'],
+  \ 'hl':      ['fg', 'Comment'],
+  \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
+  \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
+  \ 'hl+':     ['fg', 'Statement'],
+  \ 'info':    ['fg', 'PreProc'],
+  \ 'border':  ['fg', 'Ignore'],
+  \ 'prompt':  ['fg', 'Conditional'],
+  \ 'pointer': ['fg', 'Exception'],
+  \ 'marker':  ['fg', 'Keyword'],
+  \ 'spinner': ['fg', 'Label'],
+  \ 'header':  ['fg', 'EndOfBuffer'] }
+
+let g:go_doc_window_popup_window=1
+let g:user_emmet_expandabbr_key='<Tab>'
+imap <expr> <tab> emmet#expandAbbrIntelligent("\<tab>")
+
 
 " Remap keys for gotos
 nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
-
+nmap <silent> gn <Plug>(coc-diagnostic-next-error)
 " Use K to show documentation in preview window
 nnoremap <silent> K :call <SID>show_documentation()<CR>
+nmap <silent> gc :GitMessenger<CR>
 
 function! s:show_documentation()
   if (index(['vim','help'], &filetype) >= 0)
@@ -50,6 +114,20 @@ function! s:show_documentation()
     call CocAction('doHover')
   endif
 endfunction
+
+
+""""" VIM GO
+let g:go_gopls_complete_unimported = 1
+" Specifies whether `gopls` can provide placeholders 
+" for function parameters and struct fields.
+let g:go_gopls_use_placeholders = 1
+let g:go_fmt_command = "goimports"
+let g:go_def_mode='gopls'
+let g:go_info_mode='gopls'
+let g:go_def_mapping_enabled=0
+" let g:go_doc_popup_window=1
+let g:go_doc_keywordprg_enabled=0
+""""" VIM GO
 
 """" enable 24bit true color
 set termguicolors
@@ -66,77 +144,48 @@ set softtabstop=2
 " when indenting with '>', use 2 spaces width
 set shiftwidth=2
 
-" ======= coc settings
 set updatetime=300
 set shortmess+=c
 set encoding=utf-8
-
-" LIMELIGHT SETTINGS
-" Color name (:help cterm-colors) or ANSI code
-" let g:limelight_conceal_ctermfg = 'gray'
-" let g:limelight_conceal_ctermfg = 240
-
-" Color name (:help gui-colors) or RGB color
-" let g:limelight_conceal_guifg = 'DarkGray'
-" let g:limelight_conceal_guifg = '#777777'
-
-" Default: 0.5
-" let g:limelight_default_coefficient = 0.7
-
-" Number of preceding/following paragraphs to include (default: 0)
-" let g:limelight_paragraph_span = 1
-
-" Beginning/end of paragraph
-"   When there's no empty line between the paragraphs
-"   and each paragraph starts with indentation
-" let g:limelight_bop = '^\s'
-" let g:limelight_eop = '\ze\n^\s'
-
-" Highlighting priority (default: 10)
-"   Set it to -1 not to overrule hlsearch
-" let g:limelight_priority = -1
-
-" AYU SETTINGS
-let ayucolor="light"  " for light version of theme
-" let ayucolor="mirage" " for mirage version of theme
-" let ayucolor="dark"   " for dark version of theme
+set background=light
 
 inoremap <silent><expr> <Tab>
       \ pumvisible() ? "\<C-n>" : "\<TAB>"
 
+
+" tmux-navigator
+" let g:tmux_navigator_no_mappings = 1
+
+" nnoremap <silent> <M-i> :TmuxNavigateLeft<cr>
+" nnoremap <silent> <M-e> :TmuxNavigateDown<cr>
+" nnoremap <silent> <M-u> :TmuxNavigateUp<cr>
+" nnoremap <silent> <M-n> :TmuxNavigateRight<cr>
+
+ab :greece: 🇬🇷
 call plug#begin('~/.local/share/nvim/plugged')
-" Plug 'fatih/vim-go'
+Plug 'fatih/vim-go'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'scrooloose/nerdtree'
 " Plug 'dense-analysis/ale'
-
-Plug 'Rigellute/rigel'
 Plug 'moll/vim-node'
 Plug 'tpope/vim-fugitive'
-"Plug 'bilalq/lite-dfm'
-Plug 'junegunn/goyo.vim'
-Plug 'junegunn/limelight.vim'
-Plug 'danilo-augusto/vim-afterglow'
-Plug 'ayu-theme/ayu-vim'
+Plug 'NLKNguyen/papercolor-theme'
+Plug 'tpope/vim-surround'
+Plug 'ryanoasis/vim-devicons'
 
 Plug 'neoclide/coc.nvim', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-eslint', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-lists', {'do': 'yarn install --frozen-lockfile'}
+Plug 'mhinz/vim-startify'
+Plug 'rhysd/git-messenger.vim'
 
-
-"Plug 'neoclide/coc-git', {'do': 'yarn install --frozen-lockfile'}
-"Plug 'neoclide/coc-tabnine', {'do': 'yarn install --frozen-lockfile'}
-"Plug 'neoclide/coc-css', {'do': 'yarn install --frozen-lockfile'}
-"Plug 'neoclide/coc-json', {'do': 'yarn install --frozen-lockfile'}
-"Plug 'neoclide/coc-html', {'do': 'yarn install --frozen-lockfile'}
-"Plug 'neoclide/coc-tsserver', {'do': 'yarn install --frozen-lockfile'}
-"Plug 'neoclide/coc-flow', {'do': 'yarn install --frozen-lockfile'}
+Plug 'voldikss/vim-floaterm'
+Plug 'liuchengxu/vista.vim'
+Plug 'christoomey/vim-tmux-navigator'
 
 call plug#end()
 
-colorscheme ayu
-autocmd! User GoyoEnter Limelight
-autocmd! User GoyoLeave Limelight!
-autocmd VimEnter * Goyo 50%x100% | highlight StatusLineNC ctermfg=white
-autocmd BufWritePre *.go :CocCommand editor.action.organizeImport
+colorscheme papercolor
+hi FloatermNF guibg=white
+hi FloatermBorderNF guibg=white guifg=white
