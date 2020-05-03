@@ -21,10 +21,18 @@ set tabstop=2
 set t_Co=256
 set noswapfile
 set number
+set hidden
 let mapleader = "\<Space>"
+" uncomment to use system clipboard for copy pasting
+" set clipboard+=unnamedplus
+
+" easymotion
+nmap s <Plug>(easymotion-overwin-f2)
+let g:EasyMotion_smartcase = 1
 
 imap nn <Esc>
 nmap <leader>s :Files<CR>
+nmap <leader>b :Buffers<CR>
 nmap <leader>n :NERDTreeToggle<CR>
 nmap gs :Rg <C-R><C-W><CR>
 nmap ges :Rg \b<C-R><C-W>\b<CR>
@@ -32,6 +40,7 @@ nmap n nzz
 nmap N Nzz
 nmap # #zz
 nmap * *zz
+nmap <leader>y "*yy
 
 " Floaterm config
 let g:floaterm_keymap_toggle = '<leader>t'
@@ -96,6 +105,7 @@ let g:go_doc_window_popup_window=1
 let g:user_emmet_expandabbr_key='<Tab>'
 imap <expr> <tab> emmet#expandAbbrIntelligent("\<tab>")
 
+let g:NERDTreeNodeDelimiter = "\u00a0"
 
 " Remap keys for gotos
 nmap <silent> gd <Plug>(coc-definition)
@@ -132,9 +142,6 @@ let g:go_doc_keywordprg_enabled=0
 """" enable 24bit true color
 set termguicolors
 
-"""" enable the theme
-syntax on
-
 filetype plugin indent on
 " On pressing tab, insert 2 spaces
 set expandtab
@@ -161,7 +168,6 @@ inoremap <silent><expr> <Tab>
 " nnoremap <silent> <M-u> :TmuxNavigateUp<cr>
 " nnoremap <silent> <M-n> :TmuxNavigateRight<cr>
 
-ab :greece: 🇬🇷
 call plug#begin('~/.local/share/nvim/plugged')
 Plug 'fatih/vim-go'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
@@ -171,8 +177,9 @@ Plug 'scrooloose/nerdtree'
 Plug 'moll/vim-node'
 Plug 'tpope/vim-fugitive'
 Plug 'NLKNguyen/papercolor-theme'
+Plug 'ayu-theme/ayu-vim'
 Plug 'tpope/vim-surround'
-Plug 'ryanoasis/vim-devicons'
+" Plug 'ryanoasis/vim-devicons'
 
 Plug 'neoclide/coc.nvim', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-eslint', {'do': 'yarn install --frozen-lockfile'}
@@ -183,9 +190,12 @@ Plug 'rhysd/git-messenger.vim'
 Plug 'voldikss/vim-floaterm'
 Plug 'liuchengxu/vista.vim'
 Plug 'christoomey/vim-tmux-navigator'
+Plug 'junegunn/goyo.vim'
+Plug 'easymotion/vim-easymotion'
 
 call plug#end()
 
+let ayucolor="mirage"
 colorscheme papercolor
 hi FloatermNF guibg=white
 hi FloatermBorderNF guibg=white guifg=white
