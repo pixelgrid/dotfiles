@@ -25,6 +25,7 @@ set hidden
 let mapleader = "\<Space>"
 " uncomment to use system clipboard for copy pasting
 " set clipboard+=unnamedplus
+let g:SuperTabDefaultCompletionType = "<c-n>"
 
 "completion improvements
 set completeopt=longest,menuone
@@ -161,8 +162,8 @@ set shortmess+=c
 set encoding=utf-8
 set background=light
 
-inoremap <silent><expr> <Tab>
-      \ pumvisible() ? "\<C-n>" : "\<TAB>"
+" inoremap <silent><expr> <Tab>
+"      \ pumvisible() ? "\<C-n>" : "\<TAB>"
 
 
 " tmux-navigator
@@ -199,10 +200,11 @@ Plug 'junegunn/goyo.vim'
 Plug 'easymotion/vim-easymotion'
 Plug 'tpope/vim-unimpaired'
 Plug 'tpope/vim-commentary'
+Plug 'ervandew/supertab'
 
 call plug#end()
 
 let ayucolor="mirage"
-colorscheme papercolor
+colorscheme PaperColor
 hi FloatermNF guibg=white
 hi FloatermBorderNF guibg=white guifg=white
