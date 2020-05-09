@@ -26,6 +26,10 @@ let mapleader = "\<Space>"
 " uncomment to use system clipboard for copy pasting
 " set clipboard+=unnamedplus
 
+"completion improvements
+set completeopt=longest,menuone
+inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+
 " easymotion
 nmap s <Plug>(easymotion-overwin-f2)
 let g:EasyMotion_smartcase = 1
@@ -113,6 +117,7 @@ nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
 nmap <silent> gn <Plug>(coc-diagnostic-next-error)
+
 " Use K to show documentation in preview window
 nnoremap <silent> K :call <SID>show_documentation()<CR>
 nmap <silent> gc :GitMessenger<CR>
@@ -182,8 +187,8 @@ Plug 'tpope/vim-surround'
 " Plug 'ryanoasis/vim-devicons'
 
 Plug 'neoclide/coc.nvim', {'do': 'yarn install --frozen-lockfile'}
-Plug 'neoclide/coc-eslint', {'do': 'yarn install --frozen-lockfile'}
-Plug 'neoclide/coc-lists', {'do': 'yarn install --frozen-lockfile'}
+" Plug 'neoclide/coc-eslint', {'do': 'yarn install --frozen-lockfile'}
+" Plug 'neoclide/coc-lists', {'do': 'yarn install --frozen-lockfile'}
 Plug 'mhinz/vim-startify'
 Plug 'rhysd/git-messenger.vim'
 
@@ -192,6 +197,8 @@ Plug 'liuchengxu/vista.vim'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'junegunn/goyo.vim'
 Plug 'easymotion/vim-easymotion'
+Plug 'tpope/vim-unimpaired'
+Plug 'tpope/vim-commentary'
 
 call plug#end()
 
