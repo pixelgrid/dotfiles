@@ -25,12 +25,8 @@ set hidden
 let mapleader = "\<Space>"
 " uncomment to use system clipboard for copy pasting
 " set clipboard+=unnamedplus
-let g:SuperTabDefaultCompletionType = "<c-n>"
 
-"completion improvements
-set completeopt=longest,menuone
-inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
-
+set listchars=tab:»═,trail:•,extends:❯,precedes:❮
 " easymotion
 nmap s <Plug>(easymotion-overwin-f2)
 let g:EasyMotion_smartcase = 1
@@ -45,7 +41,8 @@ nmap n nzz
 nmap N Nzz
 nmap # #zz
 nmap * *zz
-nmap <leader>y "*yy
+nmap <leader>r :Rg 
+vmap <leader>y "*yy
 
 " Floaterm config
 let g:floaterm_keymap_toggle = '<leader>t'
@@ -107,8 +104,8 @@ let g:fzf_colors =
   \ 'header':  ['fg', 'EndOfBuffer'] }
 
 let g:go_doc_window_popup_window=1
-let g:user_emmet_expandabbr_key='<Tab>'
-imap <expr> <tab> emmet#expandAbbrIntelligent("\<tab>")
+" let g:user_emmet_expandabbr_key='<Tab>'
+" imap <expr> <tab> emmet#expandAbbrIntelligent("\<tab>")
 
 let g:NERDTreeNodeDelimiter = "\u00a0"
 
@@ -118,7 +115,6 @@ nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
 nmap <silent> gn <Plug>(coc-diagnostic-next-error)
-
 " Use K to show documentation in preview window
 nnoremap <silent> K :call <SID>show_documentation()<CR>
 nmap <silent> gc :GitMessenger<CR>
@@ -131,18 +127,17 @@ function! s:show_documentation()
   endif
 endfunction
 
-
 """"" VIM GO
-let g:go_gopls_complete_unimported = 1
+" let g:go_gopls_complete_unimported = 1
 " Specifies whether `gopls` can provide placeholders 
 " for function parameters and struct fields.
-let g:go_gopls_use_placeholders = 1
-let g:go_fmt_command = "goimports"
-let g:go_def_mode='gopls'
-let g:go_info_mode='gopls'
-let g:go_def_mapping_enabled=0
+" let g:go_gopls_use_placeholders = 1
+" let g:go_fmt_command = "goimports"
+" let g:go_def_mode='gopls'
+" let g:go_info_mode='gopls'
+" let g:go_def_mapping_enabled=0
 " let g:go_doc_popup_window=1
-let g:go_doc_keywordprg_enabled=0
+" let g:go_doc_keywordprg_enabled=0
 """"" VIM GO
 
 """" enable 24bit true color
@@ -162,20 +157,44 @@ set shortmess+=c
 set encoding=utf-8
 set background=light
 
-" inoremap <silent><expr> <Tab>
-"      \ pumvisible() ? "\<C-n>" : "\<TAB>"
+
+"completion improvements
+set completeopt=longest,menuone
+inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+
+inoremap <silent><expr> <Tab>
+      \ pumvisible() ? "\<C-n>" : "\<TAB>"
 
 
-" tmux-navigator
-" let g:tmux_navigator_no_mappings = 1
-
-" nnoremap <silent> <M-i> :TmuxNavigateLeft<cr>
-" nnoremap <silent> <M-e> :TmuxNavigateDown<cr>
-" nnoremap <silent> <M-u> :TmuxNavigateUp<cr>
-" nnoremap <silent> <M-n> :TmuxNavigateRight<cr>
+function! GetSourcegraphURL(config) abort
+    if a:config['remote'] =~ "^gitolite@code.uber.internal"
+        let repository = substitute(matchstr(a:config['remote'], 'code.uber.internal.*'), ':', '/', '')
+        let commit = a:config['commit']
+        let path = a:config['path']
+        let url = printf("https://sourcegraph.uberinternal.com/%s@%s/-/blob/%s",
+            \ repository,
+            \ commit,
+            \ path)
+        let fromLine = a:config['line1']
+        let toLine = a:config['line2']
+        if fromLine > 0 && fromLine == toLine
+            let url .= '#L' . fromLine
+        elseif toLine > 0
+            let url .= '#L' . fromLine . '-' . toLine
+        endif
+        return url
+    endif
+    return ''
+endfunction
+if !exists('g:fugitive_browse_handlers')
+    let g:fugitive_browse_handlers = []
+endif
+if index(g:fugitive_browse_handlers, function('GetSourcegraphURL')) < 0
+    call insert(g:fugitive_browse_handlers, function('GetSourcegraphURL'))
+endif
 
 call plug#begin('~/.local/share/nvim/plugged')
-Plug 'fatih/vim-go'
+" Plug 'fatih/vim-go'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'scrooloose/nerdtree'
@@ -198,13 +217,10 @@ Plug 'liuchengxu/vista.vim'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'junegunn/goyo.vim'
 Plug 'easymotion/vim-easymotion'
-Plug 'tpope/vim-unimpaired'
-Plug 'tpope/vim-commentary'
-Plug 'ervandew/supertab'
 
 call plug#end()
 
 let ayucolor="mirage"
-colorscheme PaperColor
+colorscheme papercolor
 hi FloatermNF guibg=white
 hi FloatermBorderNF guibg=white guifg=white
