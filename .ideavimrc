@@ -25,6 +25,8 @@ nmap <leader>b :action ShowIntentionActions<CR>
 nmap <leader>a :action ShowContextActions<CR>
 nmap <leader>n :action FileStructurePopup<CR>
 nmap <leader>t :action ActivateTerminalToolWindow<CR>
+nmap <leader>p :action SelectInProjectView<CR>
+nmap <leader>rt :action RunContextGroup<CR>
 nmap gs :action FindInPath<CR>
 nmap n nzz
 nmap N Nzz
@@ -41,9 +43,12 @@ nmap <silent> gk :action QuickDocumentation<CR>
 nmap <silent> E :action ShowErrorDescription<CR>
 nmap <silent> <leader>f <Plug>(easymotion-s)
 nmap <silent> <C-o> :action Back<CR>
+nmap <silent> bp :tabprevious<CR>
+nmap <silent> bn :tabnext<CR>
 
 """" enable 24bit true color
 set termguicolors
+set relativenumber
 
 filetype plugin indent on
 " On pressing tab, insert 2 spaces
