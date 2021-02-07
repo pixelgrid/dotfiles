@@ -21,7 +21,7 @@ let mapleader = "\<Space>"
 
 imap nn <Esc>
 nmap <leader>s :action SearchEverywhere<CR>
-nmap <leader>b :action ShowIntentionActions<CR>
+nmap <leader>E :action ShowIntentionActions<CR>
 nmap <leader>a :action ShowContextActions<CR>
 nmap <leader>n :action FileStructurePopup<CR>
 nmap <leader>t :action ActivateTerminalToolWindow<CR>
@@ -40,7 +40,7 @@ nmap <silent> gy :action QuickDefinition<CR>
 nmap <silent> gi :action GotoImplementation<CR>
 nmap <silent> gr :action FindUsages<CR>
 nmap <silent> gk :action QuickDocumentation<CR>
-nmap <silent> E :action ShowErrorDescription<CR>
+nmap <silent> <leader>e :action ShowErrorDescription<CR>
 nmap <silent> <leader>f <Plug>(easymotion-s)
 nmap <silent> <C-o> :action Back<CR>
 nmap <silent> bp :tabprevious<CR>
