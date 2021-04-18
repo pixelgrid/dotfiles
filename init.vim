@@ -5,10 +5,11 @@ if empty(glob('~/.local/share/nvim/site/autoload/plug.vim'))
   autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
 
+set termguicolors
+syntax on
 set nocompatible              " be iMproved, required
 filetype off
 filetype plugin indent on
-set laststatus=2
 set ignorecase
 set smartcase
 set incsearch
@@ -20,25 +21,36 @@ set shiftwidth=2
 set tabstop=2
 set t_Co=256
 set noswapfile
-set number
-set hidden
+set relativenumber
 let mapleader = "\<Space>"
-" uncomment to use system clipboard for copy pasting
-" set clipboard+=unnamedplus
-let g:SuperTabDefaultCompletionType = "<c-n>"
 
-"completion improvements
-set completeopt=longest,menuone
-inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+" ======= coc settings
+set updatetime=300
+set shortmess+=c
+set encoding=utf-8
+let g:coc_suggest_disable=1
 
-" easymotion
-nmap s <Plug>(easymotion-overwin-f2)
-let g:EasyMotion_smartcase = 1
+let g:netrw_banner = 0
+let g:netrw_liststyle = 3
+let g:netrw_browse_split = 4
+let g:netrw_altv = 1
+let g:netrw_winsize = 25
 
+let g:sneak#label = 1
+let g:sneak#use_ic_scs = 1
+
+" -- no Statusline ----------------------------------------------------------------
+set laststatus=0
+
+"enable title to be shown in tmux bar
+set title
+
+"" MAPPINGS
 imap nn <Esc>
 nmap <leader>s :Files<CR>
-nmap <leader>b :Buffers<CR>
-nmap <leader>n :NERDTreeToggle<CR>
+nmap <leader>t :Buffers<CR>
+nmap <leader>n :NvimTreeToggle<CR>
+nmap <leader>e :tabe <bar> TW<CR>
 nmap gs :Rg <C-R><C-W><CR>
 nmap ges :Rg \b<C-R><C-W>\b<CR>
 nmap n nzz
@@ -47,18 +59,27 @@ nmap # #zz
 nmap * *zz
 nmap <leader>y "*yy
 
-" Floaterm config
-let g:floaterm_keymap_toggle = '<leader>t'
-let g:floaterm_width = 0.9
-let g:floaterm_height = 0.9
-let g:floaterm_position = 'center'
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+nmap <silent> <leader>rn :call CocActionAsync('rename')<CR>
 
-let $FZF_PREVIEW_COMMAND = 'bat --theme="Monokai Extended Light" -p --color=always {} || cat {}'
-let $FZF_DEFAULT_OPTS='--layout=reverse'
+" Use K to show documentation in preview window
+nnoremap <silent> K :call <SID>show_documentation()<CR>
 
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+
+"" COMMANDS
 command! -bang -nargs=? -complete=dir Files
-  \ call fzf#vim#files(<q-args>, {'options': ['--preview', 'bat -p --theme="Monokai Extended Light" --color=always {}']}, <bang>0)
+\ call fzf#vim#files(<q-args>, {'options': ['--preview', 'bat -p --color always {}']}, <bang>0)
 
+let $FZF_PREVIEW_COMMAND = 'bat -p --color always {} || cat {}'
 command! -nargs=* Rg
   \ call fzf#vim#grep(
   \   'rg --column --line-number --no-heading --color=always --smart-case '.shellescape(<q-args>),
@@ -66,63 +87,14 @@ command! -nargs=* Rg
   \   fzf#vim#with_preview('right:50%'))
 
 
-let g:fzf_layout = { 'window': 'call CreateCenteredFloatingWindow()' }
+""" Telescope.nvim
+" Find files using Telescope command-line sugar.
+nmap <leader>s :Files<CR>
+nmap <leader>b :Buffers<CR>
+nnoremap gs :Rg <C-R><C-W><CR>
 
-function! CreateCenteredFloatingWindow()
-    let width = min([&columns - 4, max([80, &columns - 20])])
-    let height = min([&lines - 4, max([20, &lines - 10])])
-    let top = ((&lines - height) / 2) - 1
-    let left = (&columns - width) / 2
-    let opts = {'relative': 'editor', 'row': top, 'col': left, 'width': width, 'height': height, 'style': 'minimal'}
 
-    let top = "╭" . repeat("─", width - 2) . "╮"
-    let mid = "│" . repeat(" ", width - 2) . "│"
-    let bot = "╰" . repeat("─", width - 2) . "╯"
-    let lines = [top] + repeat([mid], height - 2) + [bot]
-    let s:buf = nvim_create_buf(v:false, v:true)
-    call nvim_buf_set_lines(s:buf, 0, -1, v:true, lines)
-    call nvim_open_win(s:buf, v:true, opts)
-    set winhl=Normal:Floating
-    let opts.row += 1
-    let opts.height -= 2
-    let opts.col += 2
-    let opts.width -= 4
-    call nvim_open_win(nvim_create_buf(v:false, v:true), v:true, opts)
-    au BufWipeout <buffer> exe 'bw '.s:buf
-endfunction
-
-let g:fzf_colors =
-\ { 'fg':      ['fg', 'Normal'],
-  \ 'bg':      ['bg', 'Normal'],
-  \ 'hl':      ['fg', 'Comment'],
-  \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
-  \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
-  \ 'hl+':     ['fg', 'Statement'],
-  \ 'info':    ['fg', 'PreProc'],
-  \ 'border':  ['fg', 'Ignore'],
-  \ 'prompt':  ['fg', 'Conditional'],
-  \ 'pointer': ['fg', 'Exception'],
-  \ 'marker':  ['fg', 'Keyword'],
-  \ 'spinner': ['fg', 'Label'],
-  \ 'header':  ['fg', 'EndOfBuffer'] }
-
-let g:go_doc_window_popup_window=1
-let g:user_emmet_expandabbr_key='<Tab>'
-imap <expr> <tab> emmet#expandAbbrIntelligent("\<tab>")
-
-let g:NERDTreeNodeDelimiter = "\u00a0"
-
-" Remap keys for gotos
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
-nmap <silent> gn <Plug>(coc-diagnostic-next-error)
-
-" Use K to show documentation in preview window
-nnoremap <silent> K :call <SID>show_documentation()<CR>
-nmap <silent> gc :GitMessenger<CR>
-
+"" Functions
 function! s:show_documentation()
   if (index(['vim','help'], &filetype) >= 0)
     execute 'h '.expand('<cword>')
@@ -131,80 +103,48 @@ function! s:show_documentation()
   endif
 endfunction
 
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
 
-""""" VIM GO
-let g:go_gopls_complete_unimported = 1
-" Specifies whether `gopls` can provide placeholders 
-" for function parameters and struct fields.
-let g:go_gopls_use_placeholders = 1
-let g:go_fmt_command = "goimports"
-let g:go_def_mode='gopls'
-let g:go_info_mode='gopls'
-let g:go_def_mapping_enabled=0
-" let g:go_doc_popup_window=1
-let g:go_doc_keywordprg_enabled=0
-""""" VIM GO
-
-"""" enable 24bit true color
-set termguicolors
-
-filetype plugin indent on
-" On pressing tab, insert 2 spaces
-set expandtab
-" show existing tab with 2 spaces width
-set tabstop=2
-set softtabstop=2
-" when indenting with '>', use 2 spaces width
-set shiftwidth=2
-
-set updatetime=300
-set shortmess+=c
-set encoding=utf-8
-set background=light
-
-" inoremap <silent><expr> <Tab>
-"      \ pumvisible() ? "\<C-n>" : "\<TAB>"
-
-
-" tmux-navigator
-" let g:tmux_navigator_no_mappings = 1
-
-" nnoremap <silent> <M-i> :TmuxNavigateLeft<cr>
-" nnoremap <silent> <M-e> :TmuxNavigateDown<cr>
-" nnoremap <silent> <M-u> :TmuxNavigateUp<cr>
-" nnoremap <silent> <M-n> :TmuxNavigateRight<cr>
+function! s:WriteCreatingDirs()
+  let l:file=expand("%")
+  if empty(getbufvar(bufname("%"), '&buftype')) && l:file !~# '\v^\w+\:\/'
+    let dir=fnamemodify(l:file, ':h')
+    if !isdirectory(dir)
+      call mkdir(dir, 'p')
+    endif
+  endif
+  write
+endfunction
+command! W call s:WriteCreatingDirs()
 
 call plug#begin('~/.local/share/nvim/plugged')
-Plug 'fatih/vim-go'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
-Plug 'scrooloose/nerdtree'
-" Plug 'dense-analysis/ale'
-Plug 'moll/vim-node'
 Plug 'tpope/vim-fugitive'
-Plug 'NLKNguyen/papercolor-theme'
-Plug 'ayu-theme/ayu-vim'
 Plug 'tpope/vim-surround'
-" Plug 'ryanoasis/vim-devicons'
-
+Plug 'justinmk/vim-sneak'
+Plug 'airblade/vim-gitgutter'
+Plug 'morhetz/gruvbox'
 Plug 'neoclide/coc.nvim', {'do': 'yarn install --frozen-lockfile'}
-" Plug 'neoclide/coc-eslint', {'do': 'yarn install --frozen-lockfile'}
-" Plug 'neoclide/coc-lists', {'do': 'yarn install --frozen-lockfile'}
-Plug 'mhinz/vim-startify'
-Plug 'rhysd/git-messenger.vim'
-
-Plug 'voldikss/vim-floaterm'
-Plug 'liuchengxu/vista.vim'
-Plug 'christoomey/vim-tmux-navigator'
-Plug 'junegunn/goyo.vim'
-Plug 'easymotion/vim-easymotion'
-Plug 'tpope/vim-unimpaired'
-Plug 'tpope/vim-commentary'
-Plug 'ervandew/supertab'
-
+Plug 'neoclide/coc-eslint', {'do': 'yarn install --frozen-lockfile'}
+Plug 'neoclide/coc-lists', {'do': 'yarn install --frozen-lockfile'}
+Plug 'kyazdani42/nvim-web-devicons' " for file icons
+Plug 'kyazdani42/nvim-tree.lua'
 call plug#end()
 
-let ayucolor="mirage"
-colorscheme PaperColor
-hi FloatermNF guibg=white
-hi FloatermBorderNF guibg=white guifg=white
+colorscheme gruvbox
+
+augroup suffixes
+    autocmd!
+
+    let associations = [
+                \["javascript", ".js,.javascript,.es,.esx,.json"],
+                \]
+
+    for ft in associations
+        execute "autocmd FileType " . ft[0] . " setlocal suffixesadd=" . ft[1]
+    endfor
+augroup END

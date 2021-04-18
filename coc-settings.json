@@ -1,0 +1,30 @@
+{
+  "diagnostic.virtualText": true,
+  "diagnostic.virtualTextCurrentLineOnly": false,
+  "diagnostic.virtualTextPrefix": "🚨 ",
+  "suggest.autoTrigger": "none",
+  "eslint.packageManager": "yarn",
+  "eslint.nodePath": ".yarn/sdks",
+  "eslint.autoFixOnSave": true,
+  "coc.preferences.formatOnSaveFiletypes": [],
+  "diagnostic.enable": true,
+  "languageserver": {
+    "golang": {
+      "command": "gopls",
+      "rootPatterns": ["go.mod", ".vim/", ".git/", ".hg/"],
+      "filetypes": ["go"],
+      "initializationOptions": {
+        "usePlaceholders": true
+      }
+    },
+    "flow": {
+      "command": "/home/user/web-code/.yarn/sdks/flow-bin/cli.js",
+      "args": ["lsp"],
+      "filetypes": ["javascript", "javascriptreact", "javascript.jsx"],
+      "initializationOptions": {},
+      "requireRootPattern": true,
+      "rootPatterns": [".flowconfig"],
+      "settings": {}
+    }
+  }
+}
